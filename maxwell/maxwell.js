@@ -142,6 +142,15 @@ function draw() {
   const slowRpct = molecules.filter(m => m.x > MID && spd(m) <= SPEED_THRESH).length / (N/2);
   ctx.font = '10px JetBrains Mono, monospace';
   ctx.textAlign = 'center';
+  // Labele s brojevima
+  const fastLcount = molecules.filter(m => m.x < MID && spd(m) > SPEED_THRESH).length;
+  const slowLcount = molecules.filter(m => m.x < MID && spd(m) <= SPEED_THRESH).length;
+  const fastRcount = molecules.filter(m => m.x > MID && spd(m) > SPEED_THRESH).length;
+  const slowRcount = molecules.filter(m => m.x > MID && spd(m) <= SPEED_THRESH).length;
+
+  ctx.textAlign = 'center';
+
+  // Lijeva komora — status label
   if (fastLpct > 0.55) {
     ctx.fillStyle = cssVar('--accent2');
     ctx.fillText('HOT', MID/2, 18);
@@ -152,6 +161,16 @@ function draw() {
     ctx.fillStyle = cssVar('--text-dim');
     ctx.fillText('mixed', MID/2, 18);
   }
+  // Lijeva komora — brojači
+  ctx.font = '9px JetBrains Mono, monospace';
+  ctx.fillStyle = cssVar('--accent2');
+  ctx.fillText('hot ' + fastLcount, MID/2 - 18, 34);
+  ctx.fillStyle = cssVar('--accent3');
+  ctx.fillText('cold ' + slowLcount, MID/2 + 22, 34);
+
+  ctx.font = '10px JetBrains Mono, monospace';
+
+  // Desna komora — status label
   if (slowRpct > 0.55) {
     ctx.fillStyle = cssVar('--accent3');
     ctx.fillText('COLD', MID + (W-MID)/2, 18);
@@ -162,6 +181,14 @@ function draw() {
     ctx.fillStyle = cssVar('--text-dim');
     ctx.fillText('mixed', MID + (W-MID)/2, 18);
   }
+  // Desna komora — brojači
+  ctx.font = '9px JetBrains Mono, monospace';
+  ctx.fillStyle = cssVar('--accent2');
+  ctx.fillText('hot ' + fastRcount, MID + (W-MID)/2 - 18, 34);
+  ctx.fillStyle = cssVar('--accent3');
+  ctx.fillText('cold ' + slowRcount, MID + (W-MID)/2 + 22, 34);
+
+  ctx.font = '10px JetBrains Mono, monospace';
 
   for (const m of molecules) {
     ctx.fillStyle = spd(m) > SPEED_THRESH ? cssVar('--accent2') : cssVar('--accent3');
