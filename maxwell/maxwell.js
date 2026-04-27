@@ -15,6 +15,7 @@ const SPEED_THRESH = 1.6;
 
 let molecules = [], memUsed = 0, decisions = 0;
 let running = false, gateOpen = false, gateTimer = 0, animId = null;
+let propAngle = 0;
 
 function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 
@@ -39,7 +40,7 @@ function init() {
     const a = Math.random() * Math.PI * 2;
     molecules.push({ x, y, vx: Math.cos(a)*s, vy: Math.sin(a)*s });
   }
-  memUsed = 0; decisions = 0; gateOpen = false; gateTimer = 0;
+  memUsed = 0; decisions = 0; gateOpen = false; gateTimer = 0; propAngle = 0;
   updateMem();
 }
 
@@ -99,6 +100,10 @@ function update() {
       }
     }
   }
+
+  // Propeler — brzina proporcionalna brzim molekulama lijevo
+  const hotRatio = molecules.filter(m => m.x < MID && spd(m) > SPEED_THRESH).length / N;
+  propAngle += hotRatio * 0.18;
 
   if (memUsed >= MEM_MAX) { running = false; showDone(); }
 }
@@ -162,6 +167,50 @@ function draw() {
     ctx.fillStyle = spd(m) > SPEED_THRESH ? cssVar('--accent2') : cssVar('--accent3');
     ctx.beginPath(); ctx.arc(m.x, m.y, R, 0, Math.PI*2); ctx.fill();
   }
+
+  // Propeler na HOT strani (lijevo, sredina visine)
+  drawPropeller(MID/2, H*0.72, propAngle, fastL/(N/2));
+}
+
+
+function drawPropeller(cx, cy, angle, heat) {
+  const blades = 3;
+  const hubR   = 5;
+  const bladeL = 18 + heat * 10;  // duže lopatice kad je toplije
+  const alpha  = Math.min(0.15 + heat * 0.75, 0.9);
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(angle);
+  ctx.globalAlpha = alpha;
+
+  for (let i = 0; i < blades; i++) {
+    ctx.rotate((Math.PI * 2) / blades);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(
+      hubR, -bladeL * 0.3,
+      bladeL * 0.6, -bladeL * 0.5,
+      bladeL * 0.7,  0
+    );
+    ctx.bezierCurveTo(
+      bladeL * 0.6,  bladeL * 0.3,
+      hubR,  bladeL * 0.1,
+      0, 0
+    );
+    ctx.fillStyle = cssVar('--accent2');
+    ctx.fill();
+  }
+
+  // Hub
+  ctx.globalAlpha = Math.min(alpha + 0.2, 1);
+  ctx.beginPath();
+  ctx.arc(0, 0, hubR, 0, Math.PI*2);
+  ctx.fillStyle = cssVar('--text-dim');
+  ctx.fill();
+
+  ctx.globalAlpha = 1;
+  ctx.restore();
 }
 
 function showDone() {
