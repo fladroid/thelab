@@ -1,1 +1,1 @@
-# The Lab Inside Your Head
+# The Lab
