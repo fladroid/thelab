@@ -69,15 +69,21 @@ function update() {
         const fast = spd(m) > SPEED_THRESH;
         const inL  = m.x < MID;
         const movR = m.vx > 0;
-        if ((inL && movR) || (!inL && !movR)) {
-          const pass = inL ? fast : !fast;
-          if (pass) {
-            decisions++;
-            if (decisions % 2 === 0) { memUsed = Math.min(memUsed+1, MEM_MAX); updateMem(); }
-          } else {
-            m.vx = -m.vx;
-            m.x  = inL ? MID - R - 2 : MID + R + 2;
-          }
+        // Demon logika:
+        // Molekula pokušava prijeći sredinu u bilo kom smjeru.
+        // Demon propušta samo ako molekula ide u "ispravnu" komoru:
+        //   brze (crvene) → lijevo (HOT)
+        //   spore (plave)  → desno (COLD)
+        // Sve ostalo → odbij
+        const wantsLeft = !movR;  // molekula ide lijevo
+        const allowed = wantsLeft ? fast : !fast;
+        // brza ide lijevo: OK | spora ide desno: OK
+        if (allowed) {
+          decisions++;
+          if (decisions % 2 === 0) { memUsed = Math.min(memUsed+1, MEM_MAX); updateMem(); }
+        } else {
+          m.vx = -m.vx;
+          m.x  = movR ? MID - R - 2 : MID + R + 2;
         }
       } else {
         m.vx = -m.vx;
