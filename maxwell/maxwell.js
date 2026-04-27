@@ -103,7 +103,7 @@ function update() {
 
   // Propeler — brzina proporcionalna brzim molekulama lijevo
   const hotRatio = molecules.filter(m => m.x < MID && spd(m) > SPEED_THRESH).length / N;
-  propAngle += hotRatio * 0.18;
+  propAngle += hotRatio * hotRatio * 0.9 + hotRatio * 0.08;  // kvadratni rast — sporo pa ubrzava
 
   if (memUsed >= MEM_MAX) { running = false; showDone(); }
 }
@@ -175,9 +175,9 @@ function draw() {
 
 function drawPropeller(cx, cy, angle, heat) {
   const blades = 3;
-  const hubR   = 5;
-  const bladeL = 18 + heat * 10;  // duže lopatice kad je toplije
-  const alpha  = Math.min(0.15 + heat * 0.75, 0.9);
+  const hubR   = 7;
+  const bladeL = 32 + heat * 22;  // duže lopatice kad je toplije
+  const alpha  = Math.min(0.15 + heat * 0.85, 0.95);
 
   ctx.save();
   ctx.translate(cx, cy);
