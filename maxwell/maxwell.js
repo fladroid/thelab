@@ -130,11 +130,31 @@ function draw() {
     ctx.beginPath(); ctx.arc(MID, GATE_Y, 4, 0, Math.PI*2); ctx.fill();
   }
 
+  // Dinamične labele — pokazuju stvarno stanje
+  const fastLpct = molecules.filter(m => m.x < MID && spd(m) > SPEED_THRESH).length / (N/2);
+  const slowRpct = molecules.filter(m => m.x > MID && spd(m) <= SPEED_THRESH).length / (N/2);
   ctx.font = '10px JetBrains Mono, monospace';
-  ctx.fillStyle = cssVar('--text-dim');
   ctx.textAlign = 'center';
-  ctx.fillText('HOT', MID/2, 18);
-  ctx.fillText('COLD', MID + (W-MID)/2, 18);
+  if (fastLpct > 0.55) {
+    ctx.fillStyle = cssVar('--accent2');
+    ctx.fillText('HOT', MID/2, 18);
+  } else if (fastLpct > 0.3) {
+    ctx.fillStyle = cssVar('--text-dim');
+    ctx.fillText('warming...', MID/2, 18);
+  } else {
+    ctx.fillStyle = cssVar('--text-dim');
+    ctx.fillText('mixed', MID/2, 18);
+  }
+  if (slowRpct > 0.55) {
+    ctx.fillStyle = cssVar('--accent3');
+    ctx.fillText('COLD', MID + (W-MID)/2, 18);
+  } else if (slowRpct > 0.3) {
+    ctx.fillStyle = cssVar('--text-dim');
+    ctx.fillText('cooling...', MID + (W-MID)/2, 18);
+  } else {
+    ctx.fillStyle = cssVar('--text-dim');
+    ctx.fillText('mixed', MID + (W-MID)/2, 18);
+  }
 
   for (const m of molecules) {
     ctx.fillStyle = spd(m) > SPEED_THRESH ? cssVar('--accent2') : cssVar('--accent3');
