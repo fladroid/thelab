@@ -5,6 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Maxwell's Demon — The Lab</title>
 <link rel="stylesheet" href="../assets/style.css">
+<style>
+.widget-wrap{margin:2.5rem 0;border:1px solid var(--border);background:var(--bg2);}
+#maxwell-canvas{display:block;width:100%;height:340px;background:var(--bg);}
+.widget-footer{padding:1rem 1.4rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;}
+.mem-label-text{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;}
+.mem-track{flex:1;height:6px;background:var(--bg3);border:1px solid var(--border);min-width:80px;}
+#mem-bar{height:100%;width:0%;background:var(--accent);transition:width 0.3s,background 0.5s;}
+#mem-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);white-space:nowrap;}
+#btn-restart{display:none;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);background:transparent;border:1px solid var(--accent);padding:5px 12px;cursor:pointer;transition:background 0.15s,color 0.15s;}
+#btn-restart:hover{background:var(--accent);color:var(--bg);}
+#status-text{display:none;margin:0 0 1.5rem;padding:1rem 1.4rem;border-left:2px solid var(--accent2);background:var(--bg2);font-size:0.88rem;line-height:1.75;color:var(--text);}
+#status-text strong{display:block;margin-bottom:0.3rem;font-size:0.82rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent2);}
+.legend{display:flex;gap:1.8rem;margin:1rem 0 2rem;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--text-dim);}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.prose{max-width:640px;}
+.prose p{font-size:0.95rem;line-height:1.9;margin-bottom:1.2rem;color:var(--text);}
+.prose h3{font-size:0.82rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);margin:2rem 0 0.8rem;}
+.prose .note{font-size:0.82rem;font-style:italic;color:var(--text-dim);border-top:1px solid var(--border);padding-top:1rem;margin-top:2rem;}
+</style>
 </head>
 <body>
 <nav>
@@ -21,11 +41,41 @@
     <h1>Maxwell's <em>Demon</em></h1>
     <p class="subtitle">A demon sorts fast and slow molecules — apparently violating the second law of thermodynamics. Until you count the cost of its memory.</p>
   </header>
+
+  <div class="widget-wrap">
+    <canvas id="maxwell-canvas"></canvas>
+    <div class="widget-footer">
+      <span class="mem-label-text">Demon memory</span>
+      <div class="mem-track"><div id="mem-bar"></div></div>
+      <span id="mem-label">0 / 32</span>
+      <button id="btn-restart">↺ Run again</button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div>Fast molecule (hot)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div>Slow molecule (cold)</div>
+  </div>
+
+  <div id="status-text"></div>
+
+  <div class="prose">
+    <h3>The Setup</h3>
+    <p>In 1867, James Clerk Maxwell imagined a box divided in two, filled with gas. At the dividing wall sits a tiny demon. It can see individual molecules and operate a small frictionless gate. Fast molecules go right. Slow molecules stay left.</p>
+    <p>After a while: the right side is hot, the left side is cold. Temperature difference — without doing any apparent work. The demon seems to have decreased the entropy of the system without spending energy. A perpetual motion machine of the second kind.</p>
+    <h3>The Paradox</h3>
+    <p>The second law of thermodynamics says entropy in a closed system can only stay the same or increase. Maxwell's demon appears to break it. The puzzle remained open for nearly a century.</p>
+    <h3>The Resolution</h3>
+    <p>In 1961, Rolf Landauer showed that the demon has to <em>remember</em> each decision. When the demon's memory fills up, it must erase it to continue operating.</p>
+    <p>Erasing information is not free. Landauer's principle states that erasing one bit releases at least <em>kT ln 2</em> of heat — exactly enough to restore the entropy the demon collected. The second law survives. Not because the demon is clumsy, but because <strong>information has thermodynamic weight</strong>.</p>
+    <p class="note">Landauer's principle was experimentally confirmed in 2012 by Éric Lutz and colleagues, using a single colloidal particle as a one-bit memory device.</p>
+  </div>
 </main>
 <footer>
   <span class="footer-mono">thelab.opik.net</span>
   <span class="footer-mono">© 2026 Flavio Flajs</span>
 </footer>
 <script src="../assets/main.js"></script>
+<script src="maxwell.js"></script>
 </body>
 </html>
